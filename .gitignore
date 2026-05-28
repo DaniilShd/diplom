@@ -1,0 +1,135 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+*.ipynb
+
+# Logs and databases
+*.log
+*.db
+mlflow.db
+
+# MLflow
+mlruns/
+mlflow.zip
+mlflow2.zip
+
+# Cache directories (marked as error opening dir)
+cache/
+scripts/
+utils/
+
+# Data directories (large files)
+data/experiment/
+data/experiment_v2/
+data/experiment_v3/
+data/processed/
+data/results/
+data/results_v2/
+data/results_v3/
+data/results_v4/
+data/results_v5/
+data/sevestal/train_images/
+data/sevestal/test_images/
+
+# Processed data
+processed/reports/
+
+# Model weights and checkpoints
+*.pt
+*.pth
+*.ckpt
+*.bin
+distillation/**/detectors/
+distillation/**/pretrain/
+distillation/**/pretrain_v1/
+distillation/**/logs/
+distillation/**/logs_2/
+distillation/**/logs_v1/
+distillation/**/reports/
+distillation/**/reports_2/
+distillation/**/reports_v1/
+distillation/online_distillation/detectors/
+distillation/online_distillation/logs/
+distillation/online_distillation/reports/
+distillation/online_distillation copy/detectors/
+distillation/online_distillation copy/logs/
+distillation/online_distillation copy/reports/
+distillation/online_distillation_transformer/detectors/
+distillation/online_distillation_transformer/logs/
+distillation/online_distillation_transformer/reports/
+distillation/modern_distillation/detectors/
+distillation/modern_distillation/logs/
+distillation/modern_distillation/reports/
+distillation/multilayer_distillation/detectors/
+distillation/multilayer_distillation/logs/
+distillation/multilayer_distillation/reports/
+distillation/backbone_distillation/detectors/
+distillation/backbone_distillation/logs/
+distillation/backbone_distillation/reports/
+distillation/backbone_distillation_v2/results/
+
+# Experiment outputs
+experiments/models/
+
+# Synthetic generation outputs
+generate/**/outputs/
+generate/**/generated/
+
+# Reports and results
+results/
+analysis/**/reports/
+analysis/original/reports/
+analysis/synthetic/reports/
+
+# Docker volumes (optional - uncomment if needed)
+# .docker/
+# volumes/
+
+# Archive files
+*.zip
+*.tar.gz
+*.tgz
+
+# Environment variables
+.env
+.env.local
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# ML experiment artifacts
+*.mlflow
+*.wandb
+wandb/

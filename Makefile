@@ -27,13 +27,13 @@ shell-generate:
 shell-prepare_dataset:
 	docker exec -it prepare_dataset /bin/bash
 
-shell-experiments:
+experiment-ssl:
 	docker exec -it experiments /bin/bash
 
 up-mlflow:
 	docker compose up -d mlflow
 
-shell-distillation:
+distill:
 	docker exec -it distillation /bin/bash
 
 

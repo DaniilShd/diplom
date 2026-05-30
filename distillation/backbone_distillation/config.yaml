@@ -5,17 +5,17 @@ experiment:
 teacher:
   base_model: "dinov3/vits16"
   teacher_weights: "teacher_clean_state_dict.pt"  
-  detector_path: "/app/data/experiment_v3/models/teacher/teacher_mixed_full_ssl/exported_models/exported_best.pt" 
+  detector_path: "/app/data/experiment/models/teacher/teacher_mixed_full_ssl/exported_models/exported_best.pt" 
 
 pretrain:
   method: "distillationv3"  
-  unlabeled_data: "/app/data/experiment_v3/datasets/mixed_full/train/images"
+  unlabeled_data: "/app/data/experiment/datasets/mixed_full/train/images"
   epochs: 200
   batch_size: 128
   image_size: [224, 224]
 
 detection:
-  data_path: "/app/data/experiment_v3/datasets/mixed_full"
+  data_path: "/app/data/experiment/datasets/mixed_full"
   num_classes: 4
   img_size: [640, 640]
   class_names:

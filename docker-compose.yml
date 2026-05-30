@@ -1,0 +1,200 @@
+services:
+  processed:
+    build:
+      context: .
+      dockerfile: processed/Dockerfile
+    container_name: processed
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - PYTHONPATH=/app:/app/utils:/app/scripts
+    volumes:
+      - ./data:/app/data
+      - ./processed/scripts:/app/scripts
+      - ./processed/utils:/app/utils
+      - ./processed/config.yaml:/app/config.yaml:ro
+      - ./processed/reports:/app/reports
+      - ./download_data:/app/download_data:ro
+    shm_size: 8g
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    working_dir: /app
+    stdin_open: true
+    tty: true
+    command: tail -f /dev/null
+
+  generate:
+    build:
+      context: .
+      dockerfile: generate/Dockerfile
+    container_name: generate
+    runtime: nvidia
+    environment:
+      - PYTHONPATH=/app:/app/scripts:/app/utils:/app/generate/scripts
+      - NVIDIA_VISIBLE_DEVICES=all
+      - HF_HOME=/app/cache/huggingface
+      - HUGGINGFACE_HUB_CACHE=/app/cache/huggingface
+      - TRANSFORMERS_CACHE=/app/cache/huggingface
+      - TORCH_HOME=/app/cache/torch
+      - CUDA_VISIBLE_DEVICES=0
+      - PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:512
+      - OMP_NUM_THREADS=8
+      - PYTHONPATH=/app:/app/scripts:/app/utils
+    volumes:
+      - ./data:/app/data
+      - ./generate/config.yaml:/app/config.yaml:ro
+      - ./generate:/app/generate
+      - ./generate/scripts:/app/scripts           
+      - ./generate/utils:/app/utils              
+      - ./cache:/app/cache
+      - ./mlruns:/app/mlruns
+      - ./mlflow.db:/app/mlflow.db
+    shm_size: 16g
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    ulimits:
+      memlock: -1
+      stack: 67108864
+    working_dir: /app
+    stdin_open: true
+    tty: true
+    command: tail -f /dev/null
+
+
+  analysis:
+    build:
+      context: .
+      dockerfile: analysis/Dockerfile
+    container_name: analysis
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - HF_HOME=/app/cache/huggingface
+      - TRANSFORMERS_CACHE=/app/cache/huggingface
+    volumes:
+      - .:/app
+    shm_size: 8g
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    working_dir: /app
+    stdin_open: true
+    tty: true
+    command: tail -f /dev/null
+
+
+  prepare_dataset:
+    build:
+      context: .
+      dockerfile: prepare_dataset/Dockerfile
+    container_name: prepare_dataset
+    environment:
+      - PYTHONPATH=/app:/app/scripts:/app/utils
+    volumes:
+      - ./data:/app/data
+      - ./prepare_dataset/scripts:/app/scripts
+      - ./prepare_dataset/utils:/app/utils
+      - ./prepare_dataset/config.yaml:/app/config.yaml:ro
+      - ./mlruns:/app/mlruns
+      - ./mlflow.db:/app/mlflow.db
+    shm_size: 4g
+    working_dir: /app
+    stdin_open: true
+    tty: true
+    command: tail -f /dev/null
+
+  experiments:
+    build:
+      context: .
+      dockerfile: experiments/Dockerfile
+    container_name: experiments
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - PYTHONPATH=/app:/app/experiments/scripts:/app/experiments/utils
+    volumes:
+      - ./data:/app/data
+      - ./experiments:/app/experiments
+      - ./mlruns:/app/mlruns
+      - ./mlflow.db:/app/mlflow.db
+    shm_size: 8g
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    working_dir: /app/experiments
+    stdin_open: true
+    tty: true
+    command: tail -f /dev/null
+
+
+  distillation:
+    build:
+      context: .
+      dockerfile: distillation/Dockerfile
+    container_name: distillation
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - PYTHONPATH=/app:/app/distillation/scripts:/app/distillation/backbone_distillation
+      - CUDA_VISIBLE_DEVICES=0
+      - PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:512
+      - OMP_NUM_THREADS=8
+      - HF_HOME=/app/cache/huggingface
+      - HUGGINGFACE_HUB_CACHE=/app/cache/huggingface
+      - TRANSFORMERS_CACHE=/app/cache/huggingface
+      - TORCH_HOME=/app/cache/torch
+    volumes:
+      - ./data:/app/data
+      - ./distillation:/app/distillation
+      - ./distillation/scripts:/app/scripts
+      - ./distillation/backbone_distillation:/app/backbone_distillation
+      - ./mlruns:/app/mlruns
+      - ./mlflow.db:/app/mlflow.db
+      - ./cache:/app/cache
+    shm_size: 16g
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    ulimits:
+      memlock: -1
+      stack: 67108864
+    working_dir: /app
+    stdin_open: true
+    tty: true
+    command: tail -f /dev/null
+
+  mlflow:
+    image: python:3.10-slim
+    container_name: mlflow
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mlruns:/app/mlruns
+    working_dir: /app
+    command: >
+      bash -c "pip install mlflow &&
+               mlflow ui --host 0.0.0.0 --port 5000"
+
+  

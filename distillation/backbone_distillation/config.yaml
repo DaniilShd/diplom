@@ -4,11 +4,11 @@ experiment:
 
 teacher:
   base_model: "dinov3/vits16"
-  teacher_weights: "teacher_clean_state_dict.pt"  # для дистилляции
-  detector_path: "/app/data/experiment_v3/models/teacher/teacher_mixed_full_ssl/exported_models/exported_best.pt"  # для оценки
+  teacher_weights: "teacher_clean_state_dict.pt"  
+  detector_path: "/app/data/experiment_v3/models/teacher/teacher_mixed_full_ssl/exported_models/exported_best.pt" 
 
 pretrain:
-  method: "distillationv3"  # distillationv3 — оптимален для DINOv3 учителя + задачи детекции
+  method: "distillationv3"  
   unlabeled_data: "/app/data/experiment_v3/datasets/mixed_full/train/images"
   epochs: 200
   batch_size: 128

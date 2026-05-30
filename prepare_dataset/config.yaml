@@ -1,0 +1,134 @@
+experiment:
+  name: "synthetic_vs_augmentation"
+  description: "Сравнение синтетики vs аугментации для LTDETR"
+  seed: 42
+
+paths:
+  real_dataset: "/app/data/processed/balanced_defect_patches"  
+  best_synthetic: "data/results/ablation/abl_004_r0/synthetic" 
+  
+  output_dir: "/app/data/experiment"
+
+image:
+  target_size: [640, 640]
+  format: "jpg"
+  jpeg_quality: 95
+
+yolo:
+  num_classes: 4
+  class_names:
+    0: "defect1"
+    1: "defect2"
+    2: "defect3"
+    3: "defect4"
+
+augmentation:
+  horizontal_flip: 0.5
+  
+  brightness_contrast:
+    brightness: 0.15
+    contrast: 0.15
+    p: 0.6
+  
+  hue_saturation:
+    hue: 5
+    saturation: 10
+    value: 10
+    p: 0.3
+  
+  affine:
+    scale: [0.98, 1.02]
+    translate: [-0.02, 0.02]
+    rotate: [-1, 1]
+    p: 0.2
+  
+  gauss_noise:
+    var_min: 5.0
+    var_max: 15.0
+    p: 0.2
+  
+  motion_blur:
+    blur_limit: 3
+    p: 0.15
+  
+  copies_per_image: 1
+
+
+datasets:
+  real_baseline:
+    train:
+      - source: "real/train"                    
+    val: "real/val"
+    test: "real/test"
+    size: "R"
+    description: "Только реальные данные (нижняя граница качества)"
+
+  real_augmented:
+    train:
+      - source: "real/train"            
+      - source: "real_augmented/train"        
+    val: "real/val"
+    test: "real/test"
+    size: "R + S"
+    description: "Реальные + аугментация реальных (размер S для честного сравнения)"
+
+  synthetic_full:
+    train:
+      - source: "synthetic/train"     
+      - source: "synthetic_augmented/train"   
+    val: "real/val"
+    test: "real/test"
+    size: "2S"
+    description: "Только синтетические данные (сырые + аугментированные)"
+
+  real_plus_synthetic_aug:
+    train:
+      - source: "real/train"                   
+      - source: "synthetic_augmented/train"   
+    val: "real/val"
+    test: "real/test"
+    size: "R + S"
+    description: "★★★ Реальные + аугментированная синтетика (тот же размер что и real_augmented) ★★★"
+
+  mixed_full:
+    train:
+      - source: "real/train"                    
+      - source: "real_augmented/train"          
+      - source: "synthetic/train"               
+      - source: "synthetic_augmented/train"     
+    val: "real/val"
+    test: "real/test"
+    size: "R + 3S"
+    description: "Всё вместе — поиск синергии реальных и синтетических данных"
+
+  real_augmented_massive:
+    train:
+      - source: "real/train"                  
+      - source: "real_augmented_massive/train" 
+    val: "real/val"
+    test: "real/test"
+    size: "R + 3S (тот же что и mixed_full)"
+    description: "Контроль размера для mixed_full: только реальные + агрессивная аугментация"
+
+  real_augmented_3x:
+    train:
+      - source: "real/train"                  
+      - source: "real_augmented_3x/train"    
+    val: "real/val"
+    test: "real/test"
+    size: "2S (тот же что и synthetic_full)"
+    description: "Контроль размера для synthetic_full: реальные + умеренная аугментация"
+
+  real_plus_synthetic_original:
+    train:
+      - source: "real/train"                  
+      - source: "synthetic/train"              
+    val: "real/val"
+    test: "real/test"
+    size: "R + S"
+    description: "Реальные + оригинальная синтетика (проверка эффекта аугментации синтетики)"
+
+
+mlflow:
+  tracking_uri: "file:///app/mlruns"
+  experiment_name: "prepare_dataset"

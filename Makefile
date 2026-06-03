@@ -27,22 +27,12 @@ shell-generate:
 shell-prepare_dataset:
 	docker exec -it prepare_dataset /bin/bash
 
-experiment-ssl:
+shell-experiments:
 	docker exec -it experiments /bin/bash
 
-up-mlflow:
+shell-up-mlflow:
 	docker compose up -d mlflow
 
-distill:
+shell-distill:
 	docker exec -it distillation /bin/bash
 
-
-# # Дефектные патчи (по умолчанию)
-# python generation/scripts/05_visualize_bboxes.py --samples 20
-
-# # Сбалансированные дефектные
-# python generation/scripts/05_visualize_bboxes.py \
-#     --images data/processed/balanced_defect_patches/train/images \
-#     --labels data/processed/balanced_defect_patches/train/labels \
-#     --output generation/reports/patches/balanced_vis \
-#     --samples 50

@@ -101,11 +101,12 @@ diplom_final/
 
 ## Основные результаты
 
-| Модель | mAP@50:95 | mAP@50 | mAP@75 | FPS (CPU) | Параметры |
-|---|---|---|---|---|---|
-| Учитель LTDETR | 0,255 | 0,463 | 0,261 | 61 | 41,7M |
-| Faster R-CNN (ImageNet) | 0,178 | 0,395 | 0,130 | 80 | 28,3M |
-| Faster R-CNN (distilled) | 0,209 | 0,517 | 0,137 | 80 | 28,3M |
+| Модель | mAP@50:95 | mAP@50 | mAP@75 | FPS | Параметры, М | Размер, МБ |
+|---|---|---|---|---|---|---|
+| Учитель LTDETR | 0.255 | 0.463 | 0.261 | 60.9 | 41.7 | 159.5 |
+| Faster R-CNN (scratch) | 0.144 | 0.378 | 0.083 | 78.6 | 28.3 | 108.0 |
+| Faster R-CNN (ImageNet) | 0.178 | 0.395 | 0.130 | 80.0 | 28.3 | 108.0 |
+| Faster R-CNN (distilled) | 0.209 | 0.430 | 0.137 | 80.3 | 28.3 | 108.0 |
 
 Дистилляция дала прирост mAP@50:95 с 0,178 до 0,209 относительно ImageNet-предобучения. Скорость инференса на CPU — около 80 FPS, размер модели — 108 МБ.
 
@@ -113,14 +114,26 @@ diplom_final/
 
 Все эксперименты выполняются в Docker-контейнерах:
 
-```bash
-docker-compose up -d
-docker-compose exec app bash
+## Запуск
 
-make prepare-data     # Подготовка и балансировка патчей
-make generate         # Генерация синтетического датасета
-make experiment-frozen  # Эксперименты главы 3
-make experiment-finetune
-make experiment-ssl
-make distill          # Дистилляция и обучение Faster R-CNN
+Все эксперименты выполняются в Docker-контейнерах:
+
+## Запуск
+
+Все эксперименты выполняются в Docker-контейнерах:
+
+```bash
+make up                # Запуск всех сервисов
+
+make shell-prepare_dataset # Подготовка и балансировка патчей
+exit
+
+make shell-generate # Генерация синтетического датасета
+exit
+
+make shell-experiments # Эксперименты главы 3
+exit
+
+make shell-distill # Дистилляция и обучение Faster R-CNN
+exit
 
